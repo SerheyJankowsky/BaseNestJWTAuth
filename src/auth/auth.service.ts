@@ -27,7 +27,9 @@ export class AuthService {
   }
 
   createToken(user: User): { accessToken: string } {
-    return { accessToken: this.jwtServise.sign(user) };
+    const transformUser: User = { ...user };
+    delete transformUser.password;
+    return { accessToken: this.jwtServise.sign(transformUser) };
   }
 
   //sign up
@@ -65,5 +67,13 @@ export class AuthService {
     } catch (error) {
       throw new UnauthorizedException('Email or password is invalid');
     }
+  }
+
+  sendUser(user) {
+    const userExist = this.findUser(user.email);
+    if (!userExist) {
+      throw new Error('User not found');
+    }
+    return user;
   }
 }

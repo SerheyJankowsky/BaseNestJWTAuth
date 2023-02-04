@@ -19,9 +19,10 @@ export class AuthController {
   login(@Body() user: LoginDto) {
     return this.authService.login(user);
   }
+
   @Get('user')
   @Auth()
-  getUser(@Request() req) {
-    return req.user;
+  sendUser(@Request() req) {
+    return this.authService.sendUser(req.user);
   }
 }

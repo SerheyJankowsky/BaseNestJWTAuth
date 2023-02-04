@@ -3,20 +3,23 @@ import { JwtService } from '@nestjs/jwt';
 import { IncomingMessage } from 'http';
 import { Observable } from 'rxjs';
 
+interface User {
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
 @Injectable()
 export class JWTGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const req = this.getRequest<
-      IncomingMessage & { user?: Record<string, unknown> }
-    >(context);
+    const req = this.getRequest<IncomingMessage & { user?: User }>(context);
     try {
       const token = this.getToken(req);
       const user = this.jwtService.verify(token);
-      delete user.password;
-      delete user.iat;
       req.user = user;
       return true;
     } catch (error) {
